@@ -1,0 +1,30 @@
+
+- hosts: all
+  tasks:
+   - name: Install linux-generic
+     package:
+       name: linux-generic
+       state: present
+
+   - name: Check if linux-generic is installed
+     command: dpkg -l linux-generic
+     register: pkg_chk
+
+   - name: update kernel if installed
+     when: pkg_chk.rc == 0
+     apt:
+      update_cache: yes
+      autoremove  : yes
+      autoclean   : no
+      dpkg_options: 'force-confold,force-confdef'
+      name        : linux-generic
+
+   - name: upgrade linux-generic
+     when: pkg_chk.rc == 0
+     command: "apt-get install -y --only-upgrade -o Dpkg::Options::='force-confdef' -o Dpkg::Options::='force-confold' "
+     register: install_chk
+
+   - name: autoremove linux-generic
+     when: install_chk.rc == 0
+     command: "apt-get -y autoremove -o Dpkg::Options::='force-confdef' -o Dpkg::Options::='force-confold'"
+     register: auto_chk

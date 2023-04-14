@@ -1,0 +1,16 @@
+---
+
+- hosts: all
+  tasks:
+    - name: install redis
+      package:
+        name:  redis
+        state: latest
+
+- hosts: all
+  tasks:
+    - name: install nginx
+      package:
+        name: nginx
+        state: latest
+
